@@ -1,5 +1,13 @@
 version: 2.1
 
+default-node-image: &default-node-image
+  docker:
+    - image: circleci/node:13.8.0
+
+default-aws-image: &default-aws-image
+  docker:
+    - image: amazon/aws-cli
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -16,8 +24,7 @@ commands:
             aws cloudformation delete-stack --stack-name=udapeople-frontend-<< parameters.workflowid >>
 jobs:
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *default-node-image
     steps:
       - checkout
       - restore_cache:
@@ -33,8 +40,7 @@ jobs:
           key: frontend-build
 
   build-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *default-node-image
     steps:
       - checkout
       - restore_cache:
@@ -50,8 +56,7 @@ jobs:
           key: backend-build
 
   test-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *default-node-image
     steps:
       - checkout
       - restore_cache:
@@ -64,8 +69,7 @@ jobs:
             npm run test
                 
   test-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *default-node-image
     steps:
       - checkout
       - restore_cache:
@@ -78,8 +82,7 @@ jobs:
             npm run test
 
   scan-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *default-node-image
     steps:
       - checkout
       - restore_cache:
@@ -92,8 +95,7 @@ jobs:
             npm audit fix --audit-level=critical
 
   scan-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *default-node-image
     steps:
       - checkout
       - restore_cache:
@@ -106,10 +108,12 @@ jobs:
             npm audit fix --audit-level=critical
       
   deploy-infrastructure:
-    docker:
-      - image: amazon/aws-cli
+    <<: *default-aws-image
     steps:
       - checkout
+      - run:
+          name: install tar & gzip
+          command: yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -140,8 +144,8 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
 
-      # - destroy-environment:
-      #     workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy-environment:
+          workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
