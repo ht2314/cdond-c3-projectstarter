@@ -73,6 +73,7 @@ jobs:
       - run:
           name: scan frontend for vulnerabilities
           command: |
+            cd frontend
             npm install
             npm audit --audit-level=critical
 
@@ -86,6 +87,7 @@ jobs:
       - run:
           name: scan backend for vulnerabilities
           command: |
+            cd backend
             npm install
             npm audit --audit-level=critical
 
