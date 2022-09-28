@@ -38,7 +38,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = curl --insecure https://kvdb.io/XesWz76VWDCbyM6UrsWUPj/migration_<< parameters.workflowid >>
+            SUCCESS =$(curl --insecure https://kvdb.io/XesWz76VWDCbyM6UrsWUPj/migration_<< parameters.workflowid >>)
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -259,6 +259,7 @@ jobs:
       - run:
           name: Deploy frontend
           command: |
+            cd frontend
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive     
       - destroy-environment:
