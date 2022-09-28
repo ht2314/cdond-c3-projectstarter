@@ -168,7 +168,7 @@ jobs:
       - aws-cli/setup
       - run:
           name: Check AWS is installed
-          command: aws --version
+          command: aws ec2 describe-instances
       - run:
           name: Configure server
           command: |
