@@ -52,7 +52,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          key: frontend-build
       - run:
           name: Build front-end
           command: |
@@ -68,7 +68,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          key: backend-build
       - run:
           name: Back-end build
           command: |
@@ -202,6 +202,8 @@ jobs:
       - checkout
       - aws-cli/install
       - aws-cli/setup
+      - restore_cache:
+          key: backend-build
       - run:
           name: Run migrations
           command: |
@@ -227,7 +229,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]      
+          key: frontend-build      
       - run:
           name: Uppgrade default packages
           command: sudo apt update
@@ -279,4 +281,8 @@ workflows:
           requires: [build-backend]
       - deploy-infrastructure
       - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [test-backend, scan-backend]
+      - deploy-frontend:
           requires: [deploy-infrastructure]
