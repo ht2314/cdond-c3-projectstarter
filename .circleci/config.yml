@@ -166,6 +166,7 @@ jobs:
             sudo pip3 install ansible
             aws --version
       - aws-cli/install
+      - aws-cli/setup
       - run:
           name: Check AWS is installed
           command: aws --version
