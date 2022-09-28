@@ -1,0 +1,31 @@
+---
+- name: update apt packages
+  become: true
+  apt:
+    update_cache: true
+
+- name: upgrade packages
+  become: true
+  apt:
+    upgrade: yes
+
+- name: "install python for Ansible."
+  become: true
+  apt:
+    name: python3
+
+- name: install node
+  become: true
+  apt:
+    name: nodejs
+
+- name: install npm
+  become: true
+  apt:
+    name: npm
+
+- name: install pm2
+  become: true
+  npm:
+    name: pm2
+    global: true

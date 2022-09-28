@@ -130,7 +130,6 @@ jobs:
             --tags project=udapeople \
             --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-              
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -138,12 +137,31 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text >> .circleci/ansible/inventory.txt
-            
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+      - destroy-environment:
+          workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["92:d9:9f:32:a4:f1:11:c6:4a:1c:84:78:87:fb:9e:db"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible tar gzip awscli
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
@@ -160,4 +178,4 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
-      - deploy-infrastructure
+      - configure-infrastructure
