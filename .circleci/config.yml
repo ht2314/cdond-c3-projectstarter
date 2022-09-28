@@ -175,7 +175,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
-          workflowid: "491f474"
+          workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
@@ -190,6 +190,6 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
-      # - deploy-infrastructure
-      - configure-infrastructure
-          # requires: [deploy-infrastructure]
+      - deploy-infrastructure
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
