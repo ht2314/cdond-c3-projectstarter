@@ -159,10 +159,10 @@ jobs:
           at: ~/
       - run:
           name: Install dependencies
-          
           command: |
-            apt update 
-            e
+            apt update
+            apt install tar gzip
+            python3 pip install ansible
             aws --version
       - run:
           name: Configure server
