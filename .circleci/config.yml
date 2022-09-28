@@ -162,8 +162,13 @@ jobs:
           command: |
             sudo apt update
             sudo apt install tar gzip
-            sudo python3 pip install ansible
+            sudo apt-get install python3-pip
+            sudo pip3 install ansible
             aws --version
+      - aws-cli/install
+      - run:
+          name: Check AWS is installed
+          command: aws --version
       - run:
           name: Configure server
           command: |
