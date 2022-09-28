@@ -25,6 +25,27 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name=udapeople-backend-<< parameters.workflowid >>
             aws cloudformation delete-stack --stack-name=udapeople-frontend-<< parameters.workflowid >>
+
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      workflowid:
+        description: id of workflow to allow destroying right stack
+        type: string  
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS = curl --insecure https://kvdb.io/XesWz76VWDCbyM6UrsWUPj/migration_<< parameters.workflowid >>
+            if(( $SUCCESS==1 )); 
+            then
+              cd ~/project/backend
+              npm install
+              npm run migrations:revert
+            fi
+
 jobs:
   build-frontend:
     <<: *default-node-image
@@ -148,9 +169,9 @@ jobs:
           workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   configure-infrastructure:
-    executor: aws-cli/default
     docker:
       - image: cimg/python:3.10.6
+    executor: aws-cli/default
     steps:
       - checkout
       - add_ssh_keys:
@@ -167,14 +188,80 @@ jobs:
       - aws-cli/install
       - aws-cli/setup
       - run:
-          name: Check AWS is installed
-          command: aws ec2 describe-instances
-      - run:
           name: Configure server
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
+          workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
+
+  run-migrations:
+    <<: *default-node-image
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/install
+      - aws-cli/setup
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            npm install
+            npm run migrations > migrations_dump.txt
+      - run:
+          name: Send migration results to memstash
+          command: |
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+              curl https://kvdb.io/XesWz76VWDCbyM6UrsWUPj/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            fi
+      - destroy-environment:
+          workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations:
+          workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
+
+  deploy-frontend:
+    docker:
+      - image: cimg/python:3.10.6
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]      
+      - run:
+          name: Uppgrade default packages
+          command: sudo apt update
+      - run:
+          name: Install Node & NPM
+          command: |
+            sudo apt install nodejs
+            sudo apt install npm
+      - run:
+          name: Install ansible
+          command: |
+            sudo apt-get install python3-pip
+            sudo pip3 install ansible
+      - aws-cli/install
+      - aws-cli/setup
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}")
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+      - run:
+          name: Build frontend
+          command: |
+            cd frontend
+            npm run build
+      - run:
+          name: Deploy frontend
+          command: |
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive     
+      - destroy-environment:
+          workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations:
           workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
