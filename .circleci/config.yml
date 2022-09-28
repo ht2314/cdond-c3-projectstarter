@@ -160,9 +160,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apt update
-            apt install tar gzip
-            python3 pip install ansible
+            sudo apt update
+            sudo apt install tar gzip
+            sudo python3 pip install ansible
             aws --version
       - run:
           name: Configure server
