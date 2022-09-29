@@ -315,6 +315,7 @@ jobs:
       - run:
           name: move tar to deploy files directory
           command: |
+            ls -a
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files
             ls -a .circleci/ansible/roles/deploy/files
       - run:
