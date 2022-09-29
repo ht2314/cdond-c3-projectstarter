@@ -327,11 +327,11 @@ jobs:
     docker:
       - image: alpine:latest
     executor: aws-cli/default
+    working_directory: ~/
     steps:
       - aws-cli/setup
       - attach_workspace:
           at: ~/
-      - working_directory: ~/
       - checkout:
           path: ~/
       - run:
