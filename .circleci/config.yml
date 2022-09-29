@@ -253,14 +253,14 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress[0][0]' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-      - run:
-          name: Store backend IP in file
-          command: |
-            touch backendip.txt
-            echo ${BACKEND_IP} > backendip.txt
-      - save_cache:
-          paths: [backendip.txt]
-          key: backend-ip      
+      # - run:
+      #     name: Store backend IP in file
+      #     command: |
+      #       touch backendip.txt
+      #       echo ${BACKEND_IP} > backendip.txt
+      # - save_cache:
+      #     paths: [backendip.txt]
+      #     key: backend-ip      
       - run:
           name: Build frontend
           command: |
@@ -336,18 +336,18 @@ jobs:
     steps:
       - aws-cli/install
       - aws-cli/setup
+      - attach_workspace:
+          at: ~/
       - checkout
       - run:
           name: Install dependencies
           command: |
             apk add --update curl
             apk add --update nodejs npm
-      - restore_cache:
-          key: backend-ip
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(tail -1 backendip.txt)
+            export BACKEND_IP=$(tail -1 .circleci/ansible/inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
       - run:
           name: Backend smoke test.
