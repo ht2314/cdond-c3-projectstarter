@@ -316,7 +316,8 @@ jobs:
           name: move tar to deploy files directory
           command: |
             ls -a
-            mv artifact.tar.gz .circleci/ansible/roles/deploy/files
+            sudo mv artifact.tar.gz .circleci/ansible/roles/deploy/files/
+            echo "moved"
             ls -a .circleci/ansible/roles/deploy/files
       - run:
           name: run deployment play
@@ -390,7 +391,11 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
-      - deploy-infrastructure
+      - deploy-infrastructure:
+          filters:
+            branches:
+              only:
+                - master
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
@@ -400,4 +405,4 @@ workflows:
       - deploy-backend:
           requires: [configure-infrastructure]
       - smoke-test:
-          requires: [deploy-frontend, deploy-backend]
+          requires: [run-migrations, deploy-frontend, deploy-backend]
