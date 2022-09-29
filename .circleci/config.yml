@@ -9,7 +9,7 @@ default-node-image: &default-node-image
 
 default-aws-image: &default-aws-image
   docker:
-    - image: cimg:aws:2022.06.1
+    - image: amazon/aws-cli
 
 commands:
   destroy-environment:
@@ -138,7 +138,7 @@ jobs:
       - checkout
       - run:
           name: install tar & gzip
-          command: apt install -y tar gzip
+          command: yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -359,15 +359,17 @@ jobs:
           workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   cloudfront-update:
-    <<: *default-aws-image
+    docker:
+      - image: python:3.7-alpine3.11
+    executor: aws-cli/default
     steps:
+      - aws-cli/setup
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apt install curl
-            apt install nodejs
-            apt install npm
+            apk add --update curl
+            apk add --update nodejs npm
       - run:
           name: Update cloudfront distribution
           command: |
@@ -382,15 +384,17 @@ jobs:
           workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   cleanup:
-    <<: *default-aws-image
+    docker:
+      - image: python:3.7-alpine3.11
+    executor: aws-cli/default
     steps:
+      - aws-cli/setup
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apt install curl
-            apt install nodejs
-            apt install npm
+            apk add --update curl
+            apk add --update nodejs npm
       - run:
           name: Get old stack workflow id
           command: |
