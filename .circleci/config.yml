@@ -174,6 +174,7 @@ jobs:
       - image: cimg/python:3.10.6
     executor: aws-cli/default
     steps:
+      - aws-cli/setup
       - checkout
       - add_ssh_keys:
           fingerprints: ["92:d9:9f:32:a4:f1:11:c6:4a:1c:84:78:87:fb:9e:db"]
@@ -186,8 +187,6 @@ jobs:
             sudo apt install tar gzip
             sudo apt-get install python3-pip
             sudo pip3 install ansible
-      - aws-cli/install
-      - aws-cli/setup
       - run:
           name: Configure server
           command: |
@@ -201,7 +200,6 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - aws-cli/install
       - aws-cli/setup
       - restore_cache:
           key: backend-build
@@ -229,6 +227,7 @@ jobs:
       - image: cimg/python:3.10.6
     executor: aws-cli/default
     steps:
+      - aws-cli/setup
       - checkout
       - restore_cache:
           key: frontend-build      
@@ -245,8 +244,6 @@ jobs:
           command: |
             sudo apt-get install python3-pip
             sudo pip3 install ansible
-      - aws-cli/install
-      - aws-cli/setup
       - run:
           name: Get backend url
           command: |
@@ -282,7 +279,6 @@ jobs:
       - image: cimg/python:3.10.6
     executor: aws-cli/default
     steps:
-      - aws-cli/install
       - aws-cli/setup
       - checkout
       - restore_cache:
@@ -316,8 +312,8 @@ jobs:
           name: move tar to deploy files directory
           command: |
             ls -a
-            sudo mv artifact.tar.gz .circleci/ansible/roles/deploy/files
-            echo "moved"
+            sudo cp artifact.tar.gz .circleci/ansible/roles/deploy/files
+            echo "copied"
             ls -a .circleci/ansible/roles/deploy/files
       - run:
           name: run deployment play
@@ -336,7 +332,6 @@ jobs:
       - image: alpine:latest
     executor: aws-cli/default
     steps:
-      - aws-cli/install
       - aws-cli/setup
       - attach_workspace:
           at: ~/
