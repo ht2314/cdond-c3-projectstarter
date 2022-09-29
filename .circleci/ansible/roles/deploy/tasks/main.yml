@@ -1,0 +1,26 @@
+---
+- name: create web dir
+  become: true
+  file:
+    state: directory
+    path: ~/web
+
+- name: copy backend application
+  become: true
+  copy:
+    src: artifact.tar.gz
+    dest: ~/web/artifact.tar.gz
+
+- name: unzip tar bundle
+  become: true
+  shell: tar -xvzf ~/web/archive.tar.gz
+
+- name: Start app
+  become: true
+  shell:
+    cmd: |
+      cd ~/web/archive
+      npm install
+      pm2 stop default
+      pm2 start npm -- start
+    
