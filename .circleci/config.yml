@@ -250,7 +250,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress[0][0]' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}")
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress[0][0]' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
@@ -314,7 +314,9 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
       - run:
           name: move tar to deploy files directory
-          command: mv artifact.tar.gz .circleci/ansible/roles/deploy/files 
+          command: |
+            mv artifact.tar.gz .circleci/ansible/roles/deploy/files
+            ls -a .circleci/ansible/roles/deploy/files
       - run:
           name: run deployment play
           command: |
