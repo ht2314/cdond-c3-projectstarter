@@ -327,7 +327,6 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     executor: aws-cli/default
-    working_directory: ~/
     steps:
       - aws-cli/setup
       - checkout
