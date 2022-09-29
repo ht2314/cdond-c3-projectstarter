@@ -330,9 +330,9 @@ jobs:
     working_directory: ~/
     steps:
       - aws-cli/setup
+      - checkout
       - attach_workspace:
           at: ~/
-      - checkout
       - run:
           name: Install dependencies
           command: |
