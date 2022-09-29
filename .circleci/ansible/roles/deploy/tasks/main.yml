@@ -1,28 +1,23 @@
 ---
 - name: create web dir
-  become: true
   file:
     state: directory
     path: ~/udapeople
 
 - name: copy backend application
-  become: true
   copy:
     src: artifact.tar.gz
     dest: ~/udapeople/artifact.tar.gz
 
 - name: unzip tar bundle
-  become: true
   shell: tar -xvzf ~/udapeople/artifact.tar.gz -C ~/udapeople
 
 - name: init pm2
-  become: true
   shell:
     cmd: |
       pm2 --help
 
 - name: Start app
-  become: true
   shell:
     cmd: |
       cd ~/udapeople
