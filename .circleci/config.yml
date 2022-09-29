@@ -316,7 +316,7 @@ jobs:
           name: move tar to deploy files directory
           command: |
             ls -a
-            sudo mv artifact.tar.gz .circleci/ansible/roles/deploy/files/
+            sudo mv artifact.tar.gz .circleci/ansible/roles/deploy/files
             echo "moved"
             ls -a .circleci/ansible/roles/deploy/files
       - run:
