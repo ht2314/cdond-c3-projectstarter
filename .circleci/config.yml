@@ -310,13 +310,7 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
       - run:
           name: move tar to deploy files directory
-          command: |
-            ls -a
-            ls -a .circleci
-            ls -a .circleci/ansible
-            ls -a .circleci/ansible/roles
-            ls -a .circleci/ansible/roles/deploy
-            mv -v artifact.tar.gz .circleci/ansible/roles/deploy/files
+          command: mv -v artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: run deployment play
           command: |
