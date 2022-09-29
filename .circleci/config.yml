@@ -330,13 +330,10 @@ jobs:
             apk add --update curl
             apk add --update nodejs npm
       - run:
-          name: Get backend url
+          name: Backend smoke test
           command: |
             export BACKEND_IP=$(tail -1 .circleci/ansible/inventory.txt)
             echo $BACKEND_IP
-      - run:
-          name: Backend smoke test
-          command: |
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
             if curl "${API_URL}/api/status" | grep "ok"
