@@ -325,15 +325,14 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest
+      - image: python:3.7-alpine3.11
     executor: aws-cli/default
     working_directory: ~/
     steps:
       - aws-cli/setup
       - attach_workspace:
           at: ~/
-      - checkout:
-          path: ~/
+      - checkout
       - run:
           name: Install dependencies
           command: |
