@@ -280,7 +280,10 @@ jobs:
   deploy-backend:
     docker:
       - image: cimg/python:3.10.6
+    executor: aws-cli/default
     steps:
+      - aws-cli/install
+      - aws-cli/setup
       - checkout
       - restore_cache:
           key: backend-build
@@ -311,9 +314,7 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
       - run:
           name: move tar to deploy files directory
-          command: |
-            ls -a
-            mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+          command: mv artifact.tar.gz .circleci/ansible/roles/deploy/files/
       - run:
           name: run deployment play
           command: |
@@ -329,11 +330,16 @@ jobs:
   smoke-test:
     docker:
       - image: alpine:latest
+    executor: aws-cli/default
     steps:
+      - aws-cli/install
+      - aws-cli/setup
       - checkout
       - run:
           name: Install dependencies
-          command: apk add --update curl
+          command: |
+            apk add --update curl
+            apk add --update nodejs npm
       - restore_cache:
           key: backend-ip
       - run:
