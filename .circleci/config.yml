@@ -199,8 +199,8 @@ jobs:
     <<: *default-node-image
     executor: aws-cli/default
     steps:
-      - checkout
       - aws-cli/setup
+      - checkout
       - restore_cache:
           key: backend-build
       - run:
@@ -340,8 +340,11 @@ jobs:
       - run:
           name: Get backend url
           command: |
+            ls -a
             export BACKEND_IP=$(tail -1 .circleci/ansible/inventory.txt)
+            echo $ABACKEND_IP
             export API_URL="http://${BACKEND_IP}:3030"
+            echo $API_URL
       - run:
           name: Backend smoke test.
           command: |
