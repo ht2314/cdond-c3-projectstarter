@@ -331,7 +331,9 @@ jobs:
       - aws-cli/setup
       - attach_workspace:
           at: ~/
-      - checkout
+      - working_directory: ~/
+      - checkout:
+          path: ~/
       - run:
           name: Install dependencies
           command: |
