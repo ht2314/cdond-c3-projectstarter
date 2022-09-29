@@ -9,7 +9,7 @@ default-node-image: &default-node-image
 
 default-aws-image: &default-aws-image
   docker:
-    - image: cimg:aws:2022.09.1
+    - image: cimg:aws:2022.09
 
 commands:
   destroy-environment:
