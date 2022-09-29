@@ -9,7 +9,7 @@ default-node-image: &default-node-image
 
 default-aws-image: &default-aws-image
   docker:
-    - image: cimg:aws
+    - image: cimg:aws:2022.09.1
 
 commands:
   destroy-environment:
@@ -138,7 +138,7 @@ jobs:
       - checkout
       - run:
           name: install tar & gzip
-          command: apt install tar gzip
+          command: apt install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
