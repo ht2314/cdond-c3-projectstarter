@@ -398,6 +398,12 @@ jobs:
       - restore_cache:
           key: old-workflow-id-3
       - run:
+          name: list cached file
+          command: |
+            ls -a
+            cd /home
+            ls -a
+      - run:
           name: Get old stack workflow id
           command: |
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
