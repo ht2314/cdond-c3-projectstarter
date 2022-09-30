@@ -29,3 +29,18 @@
   npm:
     name: pm2
     global: true
+
+- name: get node exporter package
+  become: true
+  get:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+
+- name: extract node exporter package
+  become: true
+  shell: tar xzf node_exporter-1.0.1.linux-amd64.tar.gz
+
+- name: start node exporter
+  become: true
+  shell: |
+    cd node_exporter-1.0.1.linux-amd64
+    ./node_exporter

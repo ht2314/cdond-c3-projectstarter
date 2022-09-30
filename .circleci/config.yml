@@ -245,16 +245,13 @@ jobs:
             sudo apt-get install python3-pip
             sudo pip3 install ansible
       - run:
-          name: Get backend url
+          name: Build frontend
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}" 
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
-      - run:
-          name: Build frontend
-          command: |
             echo "${API_URL}"
             cd frontend
             npm run build
