@@ -372,10 +372,13 @@ jobs:
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
             echo OldWorkflowID: "${OldWorkflowID}"
-            echo ${OldWorkFlowID} >> ./OldWorkFlowID.txt
+            echo ${OldWorkFlowID} >> OldWorkFlowID.txt
+            ls -a
+            pwd
+            cat OldWorkFlowID.txt
       - save_cache:
-          paths: [/home/OldWorkFlowID.txt]
-          key: old-workflow-id-3
+          paths: [OldWorkFlowID.txt]
+          key: old-workflow-id-4
       - run:
           name: Update cloudfront distribution
           command: |
@@ -396,10 +399,11 @@ jobs:
       - aws-cli/setup
       - checkout
       - restore_cache:
-          key: old-workflow-id-3
+          key: old-workflow-id-4
       - run:
           name: list cached file
           command: |
+            ls -a
             cd /home/circleci/project
             ls -a
       - run:
