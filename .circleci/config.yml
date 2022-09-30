@@ -374,8 +374,8 @@ jobs:
             echo OldWorkflowID: "${OldWorkflowID}"
             echo ${OldWorkFlowID} >> ./OldWorkFlowID.txt
       - save_cache:
-          paths: [./OldWorkFlowID.txt]
-          key: old-workflow-id-2
+          paths: [/home/OldWorkFlowID.txt]
+          key: old-workflow-id-3
       - run:
           name: Update cloudfront distribution
           command: |
@@ -396,7 +396,7 @@ jobs:
       - aws-cli/setup
       - checkout
       - restore_cache:
-          key: old-workflow-id-2
+          key: old-workflow-id-3
       - run:
           name: Get old stack workflow id
           command: |
@@ -408,7 +408,7 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            OldWorkFlowId=$(cat ./OldWorkFlowID.txt)
+            OldWorkFlowId=$(cat /home/OldWorkFlowID.txt)
             echo OldWorkflowID: "${OldWorkflowID}"
             echo Stack names: "${STACKS[@]}
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
