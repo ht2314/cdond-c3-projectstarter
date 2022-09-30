@@ -400,7 +400,7 @@ jobs:
       - run:
           name: list cached file
           command: |
-            cd /home/circleci
+            cd /home/circleci/project
             ls -a
       - run:
           name: Get old stack workflow id
@@ -413,7 +413,7 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            OldWorkFlowId=$(cat /home/circleci/OldWorkFlowID.txt)
+            OldWorkFlowId=$(cat /home/circleci/project/OldWorkFlowID.txt)
             echo OldWorkflowID: "${OldWorkflowID}"
             echo Stack names: "${STACKS[@]}
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
