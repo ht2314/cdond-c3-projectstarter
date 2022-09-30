@@ -371,6 +371,18 @@ jobs:
             apk add --update curl
             apk add --update nodejs npm
       - run:
+          name: Store old workflow id
+          command: |
+            # Fetch the Old workflow ID
+            export OldWorkflowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo ${OldWorkFlowID} >> ~/OldWorkFlowID.txt
+      - save_cache:
+          paths: [~/OldWorkFlowID.txt]
+          key: old-workflow-id
+      - run:
           name: Update cloudfront distribution
           command: |
             aws cloudformation deploy \
@@ -389,14 +401,11 @@ jobs:
     steps:
       - aws-cli/setup
       - checkout
+      - restore_cache:
+          key: old-workflow-id
       - run:
           name: Get old stack workflow id
           command: |
-            # Fetch the Old workflow ID
-            export OldWorkflowID=$(aws cloudformation \
-              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text)
-            echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
@@ -405,6 +414,9 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
+            OldWorkFlowId=$(cat ~/OldWorkFlowID.txt)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo Stack names: "${STACKS[@]}
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
