@@ -255,6 +255,7 @@ jobs:
       - run:
           name: Build frontend
           command: |
+            echo "${API_URL}"
             cd frontend
             npm run build
       - run:
@@ -380,7 +381,7 @@ jobs:
             cat OldWorkFlowID.txt
       - save_cache:
           paths: [OldWorkFlowID.txt]
-          key: old-workflow-id-5
+          key: old-workflow-id-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Update cloudfront distribution
           command: |
@@ -401,7 +402,7 @@ jobs:
       - aws-cli/setup
       - checkout
       - restore_cache:
-          key: old-workflow-id-5
+          key: old-workflow-id-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Remove old stacks and files
           command: |
