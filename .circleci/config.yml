@@ -57,6 +57,7 @@ jobs:
       - run:
           name: Build front-end
           command: |
+            curl --help
             sudo apt install curl
             cd frontend
             npm install
