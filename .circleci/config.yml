@@ -381,7 +381,7 @@ jobs:
             echo ${OldWorkFlowID} >> ./OldWorkFlowID.txt
       - save_cache:
           paths: [./OldWorkFlowID.txt]
-          key: old-workflow-id
+          key: old-workflow-id-2
       - run:
           name: Update cloudfront distribution
           command: |
@@ -402,7 +402,7 @@ jobs:
       - aws-cli/setup
       - checkout
       - restore_cache:
-          key: old-workflow-id
+          key: old-workflow-id-2
       - run:
           name: Get old stack workflow id
           command: |
