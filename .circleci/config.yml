@@ -390,9 +390,6 @@ jobs:
       - aws-cli/setup
       - checkout
       - run:
-          name: Install dependencies
-          command: apt install curl
-      - run:
           name: Get old stack workflow id
           command: |
             # Fetch the Old workflow ID
