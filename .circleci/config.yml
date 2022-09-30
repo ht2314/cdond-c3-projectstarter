@@ -384,17 +384,14 @@ jobs:
           workflowid: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   cleanup:
-    docker:
-      - image: python:3.7-alpine3.11
+    <<: *default-node-image
     executor: aws-cli/default
     steps:
       - aws-cli/setup
       - checkout
       - run:
           name: Install dependencies
-          command: |
-            apk add --update curl
-            apk add --update nodejs npm
+          command: apt install curl
       - run:
           name: Get old stack workflow id
           command: |
@@ -405,8 +402,8 @@ jobs:
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names
-            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             echo Stack names: "${STACKS[@]}"
       - run:
           name: Remove old stacks and files
