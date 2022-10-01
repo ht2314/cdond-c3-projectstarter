@@ -30,6 +30,10 @@
     name: pm2
     global: true
 
+- name: create node_exporter user
+  become: true
+  shell: useradd --no-create-home node_exporter
+
 - name: get node exporter package
   become: true
   shell: |
