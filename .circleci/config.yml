@@ -378,7 +378,7 @@ jobs:
             cat OldWorkFlowID.txt
       - save_cache:
           paths: [OldWorkFlowID.txt]
-          key: "old-workflow-id-${CIRCLE_WORKFLOW_ID:0:7}"
+          key: old-workflow-id-{{ .Environment.CIRCLE_WORKFLOW_ID }}
       - run:
           name: Update cloudfront distribution
           command: |
@@ -399,7 +399,7 @@ jobs:
       - aws-cli/setup
       - checkout
       - restore_cache:
-          key: "old-workflow-id-${CIRCLE_WORKFLOW_ID:0:7}""
+          key: old-workflow-id-{{ .Environment.CIRCLE_WORKFLOW_ID }}
       - run:
           name: Remove old stacks and files
           command: |
