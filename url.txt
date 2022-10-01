@@ -1,2 +1,2 @@
 https://github.com/ht2314/cdond-c3-projectstarter
-http://do9eiwr2kkag1.cloudfront.net/#/employees
+http://udapeople-3deecc4.s3.amazonaws.com/index.html#/employees
