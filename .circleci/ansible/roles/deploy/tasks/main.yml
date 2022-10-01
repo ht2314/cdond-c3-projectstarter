@@ -17,6 +17,14 @@
     cmd: |
       pm2 --help
 
+- name: start node exporter
+  become: true
+  shell: |
+    systemctl daemon-reload
+    systemctl enable node-exporter
+    systemctl start node-exporter
+    systemctl status node-exporter
+
 - name: Start app
   shell:
     cmd: |
@@ -24,12 +32,4 @@
       npm install
       pm2 stop default
       pm2 start npm -- start
-
-- name: start node exporter
-  become: true
-  shell: |
-    systemctl daemon-reload
-    systemctl enable node-exporter
-    systemctl start node-exporter
-    systemctl status node-exporter      
     
