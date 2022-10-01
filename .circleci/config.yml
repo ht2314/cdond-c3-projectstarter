@@ -255,14 +255,16 @@ jobs:
       - run:
           name: Build frontend
           command: |
+            echo "${API_URL}" 
             cat frontend/.env
             cd frontend
-            npm run build
+            ls -a
+            npm run build:prod
+            ls -a
       - run:
           name: Deploy frontend
           command: |
             cd frontend
-            npm install
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive    
       - destroy-environment:
