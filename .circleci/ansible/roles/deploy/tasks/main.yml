@@ -28,8 +28,8 @@
 - name: start node exporter
   become: true
   shell: |
-    systemctl daemon-reload
-    systemctl enable node-exporter
-    systemctl start node-exporter
-    systemctl status node-exporter      
+    sudo systemctl daemon-reload
+    sudo systemctl enable node-exporter
+    sudo systemctl start node-exporter
+    sudo systemctl status node-exporter      
     
